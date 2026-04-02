@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu Builder</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #dbe2ea;
+      --brand: #1d4ed8;
+      --brand-dark: #153e75;
+      --navy: #0f172a;
+      --good: #137333;
+      --warn: #b54708;
+      --bad: #b42318;
+      --soft-blue: #eef4ff;
+      --soft-green: #e9f7ee;
+      --soft-orange: #fff4e5;
+      --soft-red: #fff0f0;
+      --shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 28px));
+      margin: 22px auto 48px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--brand-dark);
+      font-weight: 800;
+      background: var(--soft-blue);
+      border: 1px solid #d9e7ff;
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    .topbar-note {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--navy), var(--brand));
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 3vw, 42px);
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 960px;
+      color: rgba(255,255,255,0.92);
+      font-size: 16px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .hero-meta span {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary { background: white; color: var(--brand-dark); }
+    .btn-secondary { background: rgba(255,255,255,0.14); color: white; border: 1px solid rgba(255,255,255,0.16); }
+    .btn-ghost { background: white; color: var(--ink); border: 1px solid var(--line); }
+    .btn-blue { background: var(--brand); color: white; }
+    .btn-red { background: var(--soft-red); color: var(--bad); border: 1px solid #ffd0d0; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 800;
+    }
+
+    .metric .value {
+      margin-top: 6px;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .metric .hint {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .panel-body { padding: 18px; }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .section h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: #344054;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cfd8e3;
+      border-radius: 12px;
+      background: white;
+      font: inherit;
+      color: inherit;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--soft-blue);
+      color: var(--brand);
+    }
+
+    .section-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .section-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fbfdff;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .section-item:hover { border-color: #bfd1ef; }
+    .section-item.active { border-color: var(--brand); background: var(--soft-blue); }
+
+    .section-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .section-item small {
+      color: var(--muted);
+    }
+
+    .pill-value {
+      white-space: nowrap;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .workspace-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .workspace-title h3 {
+      margin: 0 0 4px;
+      font-size: 22px;
+    }
+
+    .workspace-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1280px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f8fafc;
+      color: #344054;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #edf1f6;
+      vertical-align: top;
+      background: white;
+    }
+
+    tbody tr:hover td { background: #fbfdff; }
+
+    .dish-name {
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .dish-sub {
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 260px;
+    }
+
+    .ingredients-preview {
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 320px;
+      line-height: 1.45;
+    }
+
+    .number-input {
+      width: 90px;
+      min-width: 90px;
+      text-align: right;
+    }
+
+    .mix-input {
+      width: 76px;
+      min-width: 76px;
+      text-align: right;
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 78px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .score-good { background: var(--soft-green); color: var(--good); }
+    .score-warn { background: var(--soft-orange); color: var(--warn); }
+    .score-bad { background: var(--soft-red); color: var(--bad); }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .ingredient-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .ingredient-row {
+      display: grid;
+      grid-template-columns: 1.7fr .8fr .8fr .8fr auto;
+      gap: 10px;
+      align-items: end;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fbfdff;
+    }
+
+    .ingredient-row .remove-ingredient {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid #ffd0d0;
+      background: var(--soft-red);
+      color: var(--bad);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -560px;
+      width: min(560px, 100%);
+      height: 100vh;
+      background: white;
+      box-shadow: -18px 0 50px rgba(15, 23, 42, 0.18);
+      z-index: 50;
+      transition: right .25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open { right: 0; }
+
+    .drawer-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .drawer-header h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .drawer-body {
+      padding: 18px 20px 28px;
+      overflow: auto;
+    }
+
+    .drawer-close {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .35);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 40;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dish-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0 16px;
+    }
+
+    .dish-summary .box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .dish-summary span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .dish-summary strong {
+      font-size: 22px;
+    }
+
+    .section-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 1200px) {
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .metrics, .grid-2, .grid-3, .dish-summary { grid-template-columns: 1fr; }
+      .shell { width: min(100% - 18px, 1440px); }
+      .hero { padding: 22px; }
+      .ingredient-row { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .topbar, .hero, .layout, .overlay, .drawer { display: none !important; }
+      body { background: white; }
+      .print-report { display: block !important; }
+    }
+
+    .print-report { display: none; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="back-link" href="index.html">← Back to Dashboard</a>
+      <div class="topbar-note">Menu Builder • Costing, GP and Sales Mix</div>
+    </div>
+
+    <section class="hero">
+      <h1>Menu Builder</h1>
+      <p>Build menu sections, cost dishes from individual ingredients, compare target GP against current theoretical GP, and see sales mix and profit across the full menu. This page is designed to feel like a practical menu engineering tool rather than a spreadsheet.</p>
+      <div class="hero-meta">
+        <span>Ingredient Costing</span>
+        <span>Target GP</span>
+        <span>Theoretical GP</span>
+        <span>Profit</span>
+        <span>Sales Mix</span>
+        <span>Section View</span>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="addSectionBtn">Add Menu Section</button>
+        <button class="btn btn-secondary" id="addDishBtn">Add Dish</button>
+        <button class="btn btn-secondary" id="saveBtn">Save Menu JSON</button>
+        <button class="btn btn-secondary" id="loadBtn">Load Menu JSON</button>
+        <button class="btn btn-ghost" id="exportBtn">Export Menu Report HTML</button>
+        <button class="btn btn-ghost" id="printBtn">Print / Save as PDF</button>
+        <input type="file" id="fileInput" accept="application/json" hidden />
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric">
+        <div class="label">Menu Sections</div>
+        <div class="value" id="sectionsMetric">0</div>
+        <div class="hint">Active menu categories</div>
+      </div>
+      <div class="metric">
+        <div class="label">Total Dishes</div>
+        <div class="value" id="dishesMetric">0</div>
+        <div class="hint">Across all sections</div>
+      </div>
+      <div class="metric">
+        <div class="label">Average Theo GP</div>
+        <div class="value" id="avgGpMetric">0%</div>
+        <div class="hint">Weighted by mix</div>
+      </div>
+      <div class="metric">
+        <div class="label">Menu Revenue</div>
+        <div class="value" id="revenueMetric">£0.00</div>
+        <div class="hint">Using dish mix values</div>
+      </div>
+      <div class="metric">
+        <div class="label">Menu Profit</div>
+        <div class="value" id="profitMetric">£0.00</div>
+        <div class="hint">Sell less mix cost</div>
+      </div>
+      <div class="metric">
+        <div class="label">GP Health</div>
+        <div class="value" id="healthMetric">Stable</div>
+        <div class="hint">Based on target vs actual</div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>Menu Setup</h2>
+          <span class="tag">Section control</span>
+        </div>
+        <div class="panel-body">
+          <div class="section">
+            <h3>Menu Information</h3>
+            <div class="grid-2">
+              <div>
+                <label for="menuName">Menu Name</label>
+                <input id="menuName" placeholder="Example: Spring Main Menu" />
+              </div>
+              <div>
+                <label for="siteName">Site / Client</label>
+                <input id="siteName" placeholder="Example: The Crown Inn" />
+              </div>
+              <div>
+                <label for="reviewDate">Review Date</label>
+                <input id="reviewDate" type="date" />
+              </div>
+              <div>
+                <label for="defaultTargetGp">Default Target GP %</label>
+                <input id="defaultTargetGp" type="number" min="0" step="0.1" value="65" />
+              </div>
+            </div>
+            <div class="small-note">New dishes will use the default target GP unless you set a different target on the dish itself.</div>
+          </div>
+
+          <div class="section">
+            <h3>Menu Sections</h3>
+            <div id="sectionList" class="section-list"></div>
+            <div class="section-tools">
+              <button class="btn btn-blue" type="button" id="sidebarAddSectionBtn">Add Section</button>
+              <button class="btn btn-ghost" type="button" id="renameSectionBtn">Rename Selected</button>
+              <button class="btn btn-red" type="button" id="deleteSectionBtn">Delete Selected</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Selected Section Summary</h3>
+            <div id="selectedSectionSummary" class="small-note">Choose a menu section to see its summary.</div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="panel">
+        <div class="panel-header">
+          <h2>Section Workspace</h2>
+          <span class="tag" id="workspaceTag">No section selected</span>
+        </div>
+        <div class="panel-body">
+          <div class="workspace-top">
+            <div class="workspace-title">
+              <h3 id="workspaceTitle">Choose or create a menu section</h3>
+              <p id="workspaceSubtitle">Dishes in the selected section will appear here.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-blue" id="workspaceAddDishBtn">Add Dish</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="min-width:240px;">Dish</th>
+                  <th style="min-width:260px;">Ingredients</th>
+                  <th>Unit Cost</th>
+                  <th>Mix Cost</th>
+                  <th>Sell</th>
+                  <th>Profit</th>
+                  <th>Target GP</th>
+                  <th>Theo GP</th>
+                  <th>Mix</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dishTableBody">
+                <tr>
+                  <td colspan="10" style="padding:28px;color:#667085;text-align:center;">Create or select a section to begin building your menu.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="print-report" id="printReport"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="dishDrawer">
+    <div class="drawer-header">
+      <div>
+        <h3 id="drawerTitle">Add Dish</h3>
+        <div class="small-note">Build the dish from ingredients, selling price and mix.</div>
+      </div>
+      <button class="drawer-close" id="closeDrawerBtn">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="section">
+        <h3>Dish Details</h3>
+        <div class="grid-2">
+          <div>
+            <label for="dishName">Dish Name</label>
+            <input id="dishName" placeholder="Example: Fish & Chips" />
+          </div>
+          <div>
+            <label for="dishSellPrice">Sell Price (£)</label>
+            <input id="dishSellPrice" type="number" min="0" step="0.01" placeholder="0.00" />
+          </div>
+          <div>
+            <label for="dishTargetGp">Target GP %</label>
+            <input id="dishTargetGp" type="number" min="0" step="0.1" placeholder="65" />
+          </div>
+          <div>
+            <label for="dishMix">Sales Mix</label>
+            <input id="dishMix" type="number" min="0" step="1" placeholder="1" />
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <label for="dishNotes">Notes / Description</label>
+          <textarea id="dishNotes" rows="3" placeholder="Optional notes for the dish, such as key ingredients, positioning, or observations."></textarea>
+        </div>
+      </div>
+
+      <div class="dish-summary">
+        <div class="box">
+          <span>Unit Cost</span>
+          <strong id="drawerUnitCost">£0.00</strong>
+        </div>
+        <div class="box">
+          <span>Theo GP</span>
+          <strong id="drawerTheoGp">0.0%</strong>
+        </div>
+        <div class="box">
+          <span>Profit / Sale</span>
+          <strong id="drawerProfit">£0.00</strong>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Ingredients</h3>
+        <div id="ingredientList" class="ingredient-list"></div>
+        <div class="section-tools">
+          <button class="btn btn-blue" type="button" id="addIngredientBtn">Add Ingredient</button>
+        </div>
+      </div>
+
+      <div class="section-tools">
+        <button class="btn btn-blue" type="button" id="saveDishBtn">Save Dish</button>
+        <button class="btn btn-ghost" type="button" id="cancelDishBtn">Cancel</button>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    const state = {
+      menuName: '',
+      siteName: '',
+      reviewDate: '',
+      defaultTargetGp: 65,
+      selectedSectionId: null,
+      editingDishId: null,
+      sections: []
+    };
+
+    const ids = {
+      menuName: document.getElementById('menuName'),
+      siteName: document.getElementById('siteName'),
+      reviewDate: document.getElementById('reviewDate'),
+      defaultTargetGp: document.getElementById('defaultTargetGp'),
+      sectionList: document.getElementById('sectionList'),
+      selectedSectionSummary: document.getElementById('selectedSectionSummary'),
+      workspaceTitle: document.getElementById('workspaceTitle'),
+      workspaceSubtitle: document.getElementById('workspaceSubtitle'),
+      workspaceTag: document.getElementById('workspaceTag'),
+      dishTableBody: document.getElementById('dishTableBody'),
+      sectionsMetric: document.getElementById('sectionsMetric'),
+      dishesMetric: document.getElementById('dishesMetric'),
+      avgGpMetric: document.getElementById('avgGpMetric'),
+      revenueMetric: document.getElementById('revenueMetric'),
+      profitMetric: document.getElementById('profitMetric'),
+      healthMetric: document.getElementById('healthMetric'),
+      fileInput: document.getElementById('fileInput'),
+      printReport: document.getElementById('printReport')
+    };
+
+    const drawer = document.getElementById('dishDrawer');
+    const overlay = document.getElementById('overlay');
+
+    function uid(prefix) {
+      return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
+    }
+
+    function fmtCurrency(value) {
+      const num = Number(value || 0);
+      return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(num);
+    }
+
+    function fmtPercent(value) {
+      if (!isFinite(value)) return '0.0%';
+      return `${Number(value).toFixed(1)}%`;
+    }
+
+    function num(value) {
+      const parsed = Number(value);
+      return isFinite(parsed) ? parsed : 0;
+    }
+
+    function safe(text) {
+      return String(text || '').trim();
+    }
+
+    function dishUnitCost(dish) {
+      return (dish.ingredients || []).reduce((sum, ing) => {
+        const qtyUsed = num(ing.qtyUsed);
+        const packQty = Math.max(num(ing.packQty), 1);
+        const packCost = num(ing.packCost);
+        return sum + ((qtyUsed / packQty) * packCost);
+      }, 0);
+    }
+
+    function dishMixCost(dish) {
+      return dishUnitCost(dish) * Math.max(num(dish.mix), 0);
+    }
+
+    function dishTheoGp(dish) {
+      const sell = num(dish.sellPrice);
+      if (sell <= 0) return 0;
+      return ((sell - dishUnitCost(dish)) / sell) * 100;
+    }
+
+    function dishProfit(dish) {
+      return num(dish.sellPrice) - dishUnitCost(dish);
+    }
+
+    function dishGpClass(dish) {
+      const theo = dishTheoGp(dish);
+      const target = num(dish.targetGp || state.defaultTargetGp);
+      if (theo >= target) return 'score-good';
+      if (theo >= target - 3) return 'score-warn';
+      return 'score-bad';
+    }
+
+    function sectionById(id) {
+      return state.sections.find(section => section.id === id) || null;
+    }
+
+    function selectedSection() {
+      return sectionById(state.selectedSectionId);
+    }
+
+    function createSection(name = 'New Section') {
+      const section = { id: uid('section'), name, dishes: [] };
+      state.sections.push(section);
+      state.selectedSectionId = section.id;
+      renderAll();
+    }
+
+    function createDemoData() {
+      state.menuName = 'Lunch & Salads';
+      state.siteName = 'Demo Site';
+      state.reviewDate = new Date().toISOString().slice(0, 10);
+      state.defaultTargetGp = 65;
+
+      state.sections = [
+        {
+          id: uid('section'),
+          name: 'Lunch & Salads',
+          dishes: [
+            {
+              id: uid('dish'),
+              name: 'Moroccan Chicken Salad',
+              sellPrice: 14.95,
+              targetGp: 65,
+              mix: 18,
+              notes: 'Warm spiced chicken salad with dressed leaves.',
+              ingredients: [
+                { id: uid('ing'), name: 'Chicken breast', qtyUsed: 180, packQty: 5000, packCost: 27.5 },
+                { id: uid('ing'), name: 'Mixed leaves', qtyUsed: 70, packQty: 1000, packCost: 5.2 },
+                { id: uid('ing'), name: 'Moroccan dressing', qtyUsed: 45, packQty: 1000, packCost: 4.8 },
+                { id: uid('ing'), name: 'Pickled onion', qtyUsed: 25, packQty: 1000, packCost: 3.2 },
+                { id: uid('ing'), name: 'Flatbread crisp', qtyUsed: 30, packQty: 1000, packCost: 4.1 }
+              ]
+            },
+            {
+              id: uid('dish'),
+              name: 'Brie & Red Onion Quiche',
+              sellPrice: 13.95,
+              targetGp: 65,
+              mix: 12,
+              notes: 'Served with salad garnish and slaw.',
+              ingredients: [
+                { id: uid('ing'), name: 'Quiche portion', qtyUsed: 1, packQty: 12, packCost: 21.6 },
+                { id: uid('ing'), name: 'Salad garnish', qtyUsed: 60, packQty: 1000, packCost: 4.8 },
+                { id: uid('ing'), name: 'Coleslaw', qtyUsed: 80, packQty: 1000, packCost: 3.6 }
+              ]
+            },
+            {
+              id: uid('dish'),
+              name: 'Fish & Chips',
+              sellPrice: 16.95,
+              targetGp: 65,
+              mix: 26,
+              notes: 'Beer-battered fish, chips, mushy peas and tartare.',
+              ingredients: [
+                { id: uid('ing'), name: 'Fish fillet', qtyUsed: 1, packQty: 20, packCost: 42 },
+                { id: uid('ing'), name: 'Chips', qtyUsed: 220, packQty: 2500, packCost: 4.8 },
+                { id: uid('ing'), name: 'Mushy peas', qtyUsed: 90, packQty: 2500, packCost: 3.4 },
+                { id: uid('ing'), name: 'Tartare sauce', qtyUsed: 35, packQty: 1000, packCost: 4.25 },
+                { id: uid('ing'), name: 'Batter and garnish', qtyUsed: 1, packQty: 1, packCost: 0.55 }
+              ]
+            }
+          ]
+        },
+        {
+          id: uid('section'),
+          name: 'Burgers',
+          dishes: [
+            {
+              id: uid('dish'),
+              name: 'Cheese & Bacon Burger',
+              sellPrice: 14.95,
+              targetGp: 65,
+              mix: 16,
+              notes: 'Brioche bun, burger sauce and fries.',
+              ingredients: [
+                { id: uid('ing'), name: 'Burger patty 6oz', qtyUsed: 1, packQty: 24, packCost: 27.6 },
+                { id: uid('ing'), name: 'Brioche bun', qtyUsed: 1, packQty: 24, packCost: 8.4 },
+                { id: uid('ing'), name: 'Cheese slice', qtyUsed: 1, packQty: 40, packCost: 6 },
+                { id: uid('ing'), name: 'Back bacon', qtyUsed: 2, packQty: 40, packCost: 8.8 },
+                { id: uid('ing'), name: 'Fries', qtyUsed: 180, packQty: 2500, packCost: 4.8 },
+                { id: uid('ing'), name: 'Burger garnish', qtyUsed: 1, packQty: 1, packCost: 0.48 }
+              ]
+            }
+          ]
+        }
+      ];
+
+      state.selectedSectionId = state.sections[0].id;
+      syncHeaderFields();
+      renderAll();
+    }
+
+    function syncHeaderFields() {
+      ids.menuName.value = state.menuName || '';
+      ids.siteName.value = state.siteName || '';
+      ids.reviewDate.value = state.reviewDate || '';
+      ids.defaultTargetGp.value = state.defaultTargetGp || 65;
+    }
+
+    function renderSections() {
+      ids.sectionList.innerHTML = '';
+      if (!state.sections.length) {
+        ids.sectionList.innerHTML = '<div class="small-note">No sections yet. Add your first section to begin.</div>';
+        return;
+      }
+
+      state.sections.forEach(section => {
+        const dishes = section.dishes.length;
+        const avgGp = dishes ? section.dishes.reduce((sum, dish) => sum + dishTheoGp(dish), 0) / dishes : 0;
+        const item = document.createElement('div');
+        item.className = `section-item ${section.id === state.selectedSectionId ? 'active' : ''}`;
+        item.innerHTML = `
+          <div>
+            <strong>${section.name}</strong>
+            <small>${dishes} dish${dishes === 1 ? '' : 'es'} • Avg GP ${fmtPercent(avgGp)}</small>
+          </div>
+          <div class="pill-value">${dishes}</div>
+        `;
+        item.addEventListener('click', () => {
+          state.selectedSectionId = section.id;
+          renderAll();
+        });
+        ids.sectionList.appendChild(item);
+      });
+    }
+
+    function renderSelectedSectionSummary() {
+      const section = selectedSection();
+      if (!section) {
+        ids.selectedSectionSummary.textContent = 'Choose a menu section to see its summary.';
+        return;
+      }
+      const revenue = section.dishes.reduce((sum, dish) => sum + (num(dish.sellPrice) * num(dish.mix)), 0);
+      const profit = section.dishes.reduce((sum, dish) => sum + (dishProfit(dish) * num(dish.mix)), 0);
+      const avgGp = section.dishes.length ? section.dishes.reduce((sum, dish) => sum + dishTheoGp(dish), 0) / section.dishes.length : 0;
+      ids.selectedSectionSummary.innerHTML = `
+        <strong>${section.name}</strong><br>
+        ${section.dishes.length} dish${section.dishes.length === 1 ? '' : 'es'} • Revenue ${fmtCurrency(revenue)} • Profit ${fmtCurrency(profit)} • Avg Theo GP ${fmtPercent(avgGp)}
+      `;
+    }
+
+    function renderWorkspace() {
+      const section = selectedSection();
+      if (!section) {
+        ids.workspaceTitle.textContent = 'Choose or create a menu section';
+        ids.workspaceSubtitle.textContent = 'Dishes in the selected section will appear here.';
+        ids.workspaceTag.textContent = 'No section selected';
+        ids.dishTableBody.innerHTML = '<tr><td colspan="10" style="padding:28px;color:#667085;text-align:center;">Create or select a section to begin building your menu.</td></tr>';
+        return;
+      }
+
+      ids.workspaceTitle.textContent = section.name;
+      ids.workspaceSubtitle.textContent = `${section.dishes.length} dish${section.dishes.length === 1 ? '' : 'es'} in this section.`;
+      ids.workspaceTag.textContent = section.name;
+
+      if (!section.dishes.length) {
+        ids.dishTableBody.innerHTML = '<tr><td colspan="10" style="padding:28px;color:#667085;text-align:center;">No dishes in this section yet. Click “Add Dish” to create the first one.</td></tr>';
+        return;
+      }
+
+      ids.dishTableBody.innerHTML = '';
+      section.dishes.forEach(dish => {
+        const unitCost = dishUnitCost(dish);
+        const mixCost = dishMixCost(dish);
+        const sell = num(dish.sellPrice);
+        const profit = dishProfit(dish);
+        const theoGp = dishTheoGp(dish);
+        const ingredientsText = (dish.ingredients || []).map(ing => `${safe(ing.name)} (${ing.qtyUsed}/${ing.packQty})`).join(', ');
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <div class="dish-name">${safe(dish.name) || 'Untitled Dish'}</div>
+            <div class="dish-sub">${safe(dish.notes) || 'No notes added.'}</div>
+          </td>
+          <td>
+            <div class="ingredients-preview">${ingredientsText || 'No ingredients added.'}</div>
+          </td>
+          <td>${fmtCurrency(unitCost)}</td>
+          <td>${fmtCurrency(mixCost)}</td>
+          <td>
+            <input class="number-input" type="number" min="0" step="0.01" value="${sell.toFixed(2)}" data-action="sell" data-id="${dish.id}" />
+          </td>
+          <td>${fmtCurrency(profit)}</td>
+          <td>
+            <input class="number-input" type="number" min="0" step="0.1" value="${num(dish.targetGp).toFixed(1)}" data-action="targetGp" data-id="${dish.id}" />
+          </td>
+          <td><span class="score-pill ${dishGpClass(dish)}">${fmtPercent(theoGp)}</span></td>
+          <td>
+            <input class="mix-input" type="number" min="0" step="1" value="${num(dish.mix)}" data-action="mix" data-id="${dish.id}" />
+          </td>
+          <td>
+            <div style="display:flex;gap:8px;">
+              <button class="icon-btn" title="Edit dish" data-edit-id="${dish.id}">✎</button>
+              <button class="icon-btn" title="Delete dish" data-delete-id="${dish.id}">🗑</button>
+            </div>
+          </td>
+        `;
+        ids.dishTableBody.appendChild(row);
+      });
+
+      ids.dishTableBody.querySelectorAll('input[data-action]').forEach(input => {
+        input.addEventListener('input', event => {
+          const dish = section.dishes.find(item => item.id === event.target.dataset.id);
+          if (!dish) return;
+          if (event.target.dataset.action === 'sell') dish.sellPrice = num(event.target.value);
+          if (event.target.dataset.action === 'targetGp') dish.targetGp = num(event.target.value);
+          if (event.target.dataset.action === 'mix') dish.mix = num(event.target.value);
+          renderAll();
+        });
+      });
+
+      ids.dishTableBody.querySelectorAll('[data-edit-id]').forEach(btn => {
+        btn.addEventListener('click', () => openDishDrawer(btn.dataset.editId));
+      });
+
+      ids.dishTableBody.querySelectorAll('[data-delete-id]').forEach(btn => {
+        btn.addEventListener('click', () => deleteDish(btn.dataset.deleteId));
+      });
+    }
+
+    function updateMetrics() {
+      const allDishes = state.sections.flatMap(section => section.dishes);
+      const totalSections = state.sections.length;
+      const totalDishes = allDishes.length;
+      const totalRevenue = allDishes.reduce((sum, dish) => sum + (num(dish.sellPrice) * num(dish.mix)), 0);
+      const totalProfit = allDishes.reduce((sum, dish) => sum + (dishProfit(dish) * num(dish.mix)), 0);
+      const totalSellByMix = allDishes.reduce((sum, dish) => sum + (num(dish.sellPrice) * num(dish.mix)), 0);
+      const totalCostByMix = allDishes.reduce((sum, dish) => sum + dishMixCost(dish), 0);
+      const weightedGp = totalSellByMix > 0 ? ((totalSellByMix - totalCostByMix) / totalSellByMix) * 100 : 0;
+
+      ids.sectionsMetric.textContent = totalSections;
+      ids.dishesMetric.textContent = totalDishes;
+      ids.avgGpMetric.textContent = fmtPercent(weightedGp);
+      ids.revenueMetric.textContent = fmtCurrency(totalRevenue);
+      ids.profitMetric.textContent = fmtCurrency(totalProfit);
+
+      const defaultTarget = num(state.defaultTargetGp);
+      ids.healthMetric.textContent = weightedGp >= defaultTarget ? 'Strong' : weightedGp >= defaultTarget - 3 ? 'Watch' : 'At Risk';
+    }
+
+    function renderAll() {
+      syncHeaderFields();
+      renderSections();
+      renderSelectedSectionSummary();
+      renderWorkspace();
+      updateMetrics();
+      buildPrintReport();
+    }
+
+    function promptForSectionName(current = '') {
+      const name = window.prompt('Enter section name', current || '');
+      return safe(name);
+    }
+
+    function addSection() {
+      const name = promptForSectionName('New Section');
+      if (!name) return;
+      createSection(name);
+    }
+
+    function renameSection() {
+      const section = selectedSection();
+      if (!section) return alert('Select a section first.');
+      const name = promptForSectionName(section.name);
+      if (!name) return;
+      section.name = name;
+      renderAll();
+    }
+
+    function deleteSection() {
+      const section = selectedSection();
+      if (!section) return alert('Select a section first.');
+      const ok = window.confirm(`Delete section "${section.name}" and all its dishes?`);
+      if (!ok) return;
+      state.sections = state.sections.filter(item => item.id !== section.id);
+      state.selectedSectionId = state.sections[0]?.id || null;
+      renderAll();
+    }
+
+    function blankIngredient() {
+      return { id: uid('ing'), name: '', qtyUsed: 0, packQty: 1, packCost: 0 };
+    }
+
+    function dishEditorState(dish) {
+      return {
+        id: dish?.id || uid('dish'),
+        name: dish?.name || '',
+        sellPrice: dish?.sellPrice ?? 0,
+        targetGp: dish?.targetGp ?? num(state.defaultTargetGp),
+        mix: dish?.mix ?? 1,
+        notes: dish?.notes || '',
+        ingredients: (dish?.ingredients || []).map(ing => ({ ...ing }))
+      };
+    }
+
+    let currentDishDraft = null;
+
+    function openDishDrawer(dishId = null) {
+      const section = selectedSection();
+      if (!section) return alert('Create or choose a section first.');
+      state.editingDishId = dishId;
+      const existing = dishId ? section.dishes.find(d => d.id === dishId) : null;
+      currentDishDraft = dishEditorState(existing);
+      if (!currentDishDraft.ingredients.length) currentDishDraft.ingredients.push(blankIngredient());
+      document.getElementById('drawerTitle').textContent = dishId ? 'Edit Dish' : 'Add Dish';
+      renderDishDrawer();
+      drawer.classList.add('open');
+      overlay.classList.add('show');
+    }
+
+    function closeDishDrawer() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('show');
+      state.editingDishId = null;
+      currentDishDraft = null;
+    }
+
+    function renderDishDrawer() {
+      if (!currentDishDraft) return;
+      document.getElementById('dishName').value = currentDishDraft.name;
+      document.getElementById('dishSellPrice').value = num(currentDishDraft.sellPrice).toFixed(2);
+      document.getElementById('dishTargetGp').value = num(currentDishDraft.targetGp).toFixed(1);
+      document.getElementById('dishMix').value = num(currentDishDraft.mix);
+      document.getElementById('dishNotes').value = currentDishDraft.notes;
+
+      const list = document.getElementById('ingredientList');
+      list.innerHTML = '';
+
+      currentDishDraft.ingredients.forEach(ingredient => {
+        const row = document.createElement('div');
+        row.className = 'ingredient-row';
+        row.innerHTML = `
+          <div>
+            <label>Ingredient</label>
+            <input value="${safe(ingredient.name)}" data-field="name" data-id="${ingredient.id}" placeholder="Example: Chicken breast" />
+          </div>
+          <div>
+            <label>Qty Used</label>
+            <input type="number" min="0" step="0.01" value="${num(ingredient.qtyUsed)}" data-field="qtyUsed" data-id="${ingredient.id}" />
+          </div>
+          <div>
+            <label>Pack Qty</label>
+            <input type="number" min="0.01" step="0.01" value="${Math.max(num(ingredient.packQty), 1)}" data-field="packQty" data-id="${ingredient.id}" />
+          </div>
+          <div>
+            <label>Pack Cost (£)</label>
+            <input type="number" min="0" step="0.01" value="${num(ingredient.packCost).toFixed(2)}" data-field="packCost" data-id="${ingredient.id}" />
+          </div>
+          <button class="remove-ingredient" type="button" data-remove-id="${ingredient.id}">×</button>
+        `;
+        list.appendChild(row);
+      });
+
+      list.querySelectorAll('input[data-field]').forEach(input => {
+        input.addEventListener('input', event => {
+          const ing = currentDishDraft.ingredients.find(item => item.id === event.target.dataset.id);
+          if (!ing) return;
+          const field = event.target.dataset.field;
+          ing[field] = field === 'name' ? event.target.value : num(event.target.value);
+          updateDishDrawerSummary();
+        });
+      });
+
+      list.querySelectorAll('[data-remove-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentDishDraft.ingredients = currentDishDraft.ingredients.filter(item => item.id !== btn.dataset.removeId);
+          if (!currentDishDraft.ingredients.length) currentDishDraft.ingredients.push(blankIngredient());
+          renderDishDrawer();
+        });
+      });
+
+      ['dishName','dishSellPrice','dishTargetGp','dishMix','dishNotes'].forEach(id => {
+        document.getElementById(id).oninput = () => {
+          currentDishDraft.name = document.getElementById('dishName').value;
+          currentDishDraft.sellPrice = num(document.getElementById('dishSellPrice').value);
+          currentDishDraft.targetGp = num(document.getElementById('dishTargetGp').value);
+          currentDishDraft.mix = num(document.getElementById('dishMix').value);
+          currentDishDraft.notes = document.getElementById('dishNotes').value;
+          updateDishDrawerSummary();
+        };
+      });
+
+      updateDishDrawerSummary();
+    }
+
+    function updateDishDrawerSummary() {
+      const unitCost = dishUnitCost(currentDishDraft);
+      const theoGp = dishTheoGp(currentDishDraft);
+      const profit = dishProfit(currentDishDraft);
+      document.getElementById('drawerUnitCost').textContent = fmtCurrency(unitCost);
+      document.getElementById('drawerTheoGp').textContent = fmtPercent(theoGp);
+      document.getElementById('drawerProfit').textContent = fmtCurrency(profit);
+    }
+
+    function saveDishFromDrawer() {
+      const section = selectedSection();
+      if (!section) return;
+      currentDishDraft.name = safe(currentDishDraft.name);
+      if (!currentDishDraft.name) return alert('Please enter a dish name.');
+      currentDishDraft.ingredients = currentDishDraft.ingredients.filter(ing => safe(ing.name));
+      if (!currentDishDraft.ingredients.length) return alert('Add at least one ingredient.');
+
+      const existingIndex = section.dishes.findIndex(d => d.id === currentDishDraft.id);
+      if (existingIndex >= 0) {
+        section.dishes[existingIndex] = JSON.parse(JSON.stringify(currentDishDraft));
+      } else {
+        section.dishes.push(JSON.parse(JSON.stringify(currentDishDraft)));
+      }
+
+      closeDishDrawer();
+      renderAll();
+    }
+
+    function deleteDish(dishId) {
+      const section = selectedSection();
+      if (!section) return;
+      const dish = section.dishes.find(item => item.id === dishId);
+      if (!dish) return;
+      const ok = window.confirm(`Delete dish "${dish.name}"?`);
+      if (!ok) return;
+      section.dishes = section.dishes.filter(item => item.id !== dishId);
+      renderAll();
+    }
+
+    function serialiseState() {
+      return {
+        menuName: ids.menuName.value,
+        siteName: ids.siteName.value,
+        reviewDate: ids.reviewDate.value,
+        defaultTargetGp: num(ids.defaultTargetGp.value),
+        selectedSectionId: state.selectedSectionId,
+        sections: state.sections
+      };
+    }
+
+    function applyState(data) {
+      state.menuName = data.menuName || '';
+      state.siteName = data.siteName || '';
+      state.reviewDate = data.reviewDate || '';
+      state.defaultTargetGp = num(data.defaultTargetGp || 65);
+      state.sections = Array.isArray(data.sections) ? data.sections : [];
+      state.selectedSectionId = data.selectedSectionId || state.sections[0]?.id || null;
+      renderAll();
+    }
+
+    function saveJson() {
+      const data = serialiseState();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      const fileBase = safe(ids.menuName.value || 'menu-builder').replace(/\s+/g, '-').toLowerCase();
+      a.href = URL.createObjectURL(blob);
+      a.download = `${fileBase}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function buildReportMarkup() {
+      const allDishes = state.sections.flatMap(section => section.dishes);
+      const totalSellByMix = allDishes.reduce((sum, dish) => sum + (num(dish.sellPrice) * num(dish.mix)), 0);
+      const totalCostByMix = allDishes.reduce((sum, dish) => sum + dishMixCost(dish), 0);
+      const weightedGp = totalSellByMix > 0 ? ((totalSellByMix - totalCostByMix) / totalSellByMix) * 100 : 0;
+
+      return `
+        <div style="font-family:Inter,Arial,sans-serif;color:#17202a;max-width:1200px;margin:0 auto;padding:30px;line-height:1.45;">
+          <h1 style="margin:0 0 8px;font-size:32px;">Menu Builder Report</h1>
+          <p style="margin:0 0 18px;"><strong>${safe(ids.menuName.value) || 'Untitled Menu'}</strong>${safe(ids.siteName.value) ? ` • ${safe(ids.siteName.value)}` : ''}</p>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px;">
+            <div style="padding:12px;border:1px solid #dbe2ea;border-radius:12px;background:#f8fafc;"><strong>Review Date</strong><br>${safe(ids.reviewDate.value) || 'Not recorded'}</div>
+            <div style="padding:12px;border:1px solid #dbe2ea;border-radius:12px;background:#f8fafc;"><strong>Sections</strong><br>${state.sections.length}</div>
+            <div style="padding:12px;border:1px solid #dbe2ea;border-radius:12px;background:#f8fafc;"><strong>Total Dishes</strong><br>${allDishes.length}</div>
+            <div style="padding:12px;border:1px solid #dbe2ea;border-radius:12px;background:#f8fafc;"><strong>Weighted Theo GP</strong><br>${fmtPercent(weightedGp)}</div>
+          </div>
+          ${state.sections.map(section => `
+            <h2 style="margin-top:28px;border-bottom:1px solid #dbe2ea;padding-bottom:8px;">${section.name}</h2>
+            <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Dish</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Unit Cost</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Mix Cost</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Sell</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Profit</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Target GP</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Theo GP</th>
+                  <th style="text-align:left;padding:10px;border:1px solid #dbe2ea;background:#f8fafc;">Mix</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${section.dishes.map(dish => `
+                  <tr>
+                    <td style="padding:10px;border:1px solid #dbe2ea;vertical-align:top;"><strong>${dish.name}</strong><br><span style="color:#667085;font-size:12px;">${safe(dish.notes) || 'No notes'}</span><br><span style="color:#667085;font-size:12px;">${dish.ingredients.map(ing => ing.name).join(', ')}</span></td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${fmtCurrency(dishUnitCost(dish))}</td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${fmtCurrency(dishMixCost(dish))}</td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${fmtCurrency(dish.sellPrice)}</td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${fmtCurrency(dishProfit(dish))}</td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${fmtPercent(dish.targetGp)}</td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${fmtPercent(dishTheoGp(dish))}</td>
+                    <td style="padding:10px;border:1px solid #dbe2ea;">${num(dish.mix)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function exportHtml() {
+      const markup = buildReportMarkup();
+      const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Menu Builder Report</title></head><body>${markup}</body></html>`;
+      const blob = new Blob([html], { type: 'text/html' });
+      const a = document.createElement('a');
+      const fileBase = safe(ids.menuName.value || 'menu-builder-report').replace(/\s+/g, '-').toLowerCase();
+      a.href = URL.createObjectURL(blob);
+      a.download = `${fileBase}.html`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function buildPrintReport() {
+      ids.printReport.innerHTML = buildReportMarkup();
+    }
+
+    document.getElementById('addSectionBtn').addEventListener('click', addSection);
+    document.getElementById('sidebarAddSectionBtn').addEventListener('click', addSection);
+    document.getElementById('renameSectionBtn').addEventListener('click', renameSection);
+    document.getElementById('deleteSectionBtn').addEventListener('click', deleteSection);
+    document.getElementById('addDishBtn').addEventListener('click', () => openDishDrawer());
+    document.getElementById('workspaceAddDishBtn').addEventListener('click', () => openDishDrawer());
+    document.getElementById('closeDrawerBtn').addEventListener('click', closeDishDrawer);
+    document.getElementById('cancelDishBtn').addEventListener('click', closeDishDrawer);
+    overlay.addEventListener('click', closeDishDrawer);
+
+    document.getElementById('addIngredientBtn').addEventListener('click', () => {
+      currentDishDraft.ingredients.push(blankIngredient());
+      renderDishDrawer();
+    });
+
+    document.getElementById('saveDishBtn').addEventListener('click', saveDishFromDrawer);
+
+    document.getElementById('saveBtn').addEventListener('click', saveJson);
+    document.getElementById('loadBtn').addEventListener('click', () => ids.fileInput.click());
+    document.getElementById('exportBtn').addEventListener('click', exportHtml);
+    document.getElementById('printBtn').addEventListener('click', () => { buildPrintReport(); window.print(); });
+
+    ids.fileInput.addEventListener('change', async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        applyState(data);
+      } catch (error) {
+        alert('Could not load file. Please use a valid menu JSON export from this app.');
+      }
+      event.target.value = '';
+    });
+
+    [ids.menuName, ids.siteName, ids.reviewDate, ids.defaultTargetGp].forEach(input => {
+      input.addEventListener('input', () => {
+        state.menuName = ids.menuName.value;
+        state.siteName = ids.siteName.value;
+        state.reviewDate = ids.reviewDate.value;
+        state.defaultTargetGp = num(ids.defaultTargetGp.value || 65);
+        renderAll();
+      });
+    });
+
+    createDemoData();
+  </script>
+</body>
+</html>
