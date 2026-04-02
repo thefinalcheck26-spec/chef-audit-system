@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chef Consultancy Audit Report Builder</title>
+  <title>Kitchen Performance Dashboard</title>
   <style>
     :root {
-      --bg: #f5f7fb;
+      --bg: #f4f7fb;
       --card: #ffffff;
       --ink: #17202a;
       --muted: #667085;
-      --line: #dbe2ea;
-      --brand: #1f6feb;
-      --brand-dark: #124ea8;
-      --good: #137333;
-      --warn: #b54708;
-      --bad: #b42318;
-      --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
-      --radius: 18px;
+      --line: #d8e0ea;
+      --brand: #153e75;
+      --brand-2: #1d4ed8;
+      --soft: #eef4ff;
+      --success: #137333;
+      --warning: #b54708;
+      --danger: #b42318;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
     }
 
     * { box-sizing: border-box; }
@@ -25,1103 +26,581 @@
     body {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #eef3f9 0%, #f8fafc 100%);
       color: var(--ink);
-      background: var(--bg);
-      line-height: 1.45;
     }
 
     .shell {
-      width: min(1400px, calc(100% - 32px));
+      width: min(1320px, calc(100% - 32px));
       margin: 24px auto 48px;
     }
 
     .hero {
-      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      padding: 34px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #0f172a 0%, #153e75 45%, #1d4ed8 100%);
       color: white;
-      border-radius: 24px;
-      padding: 28px;
       box-shadow: var(--shadow);
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: clamp(28px, 3vw, 40px);
-    }
-
-    .hero p {
-      margin: 0;
-      max-width: 900px;
-      color: rgba(255,255,255,0.9);
-      font-size: 16px;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    @media (max-width: 1100px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .panel-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .panel-header h2 {
-      margin: 0;
-      font-size: 20px;
-    }
-
-    .panel-body {
-      padding: 20px;
-    }
-
-    .section {
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      margin-bottom: 16px;
-      background: #fff;
-    }
-
-    .section h3 {
-      margin: 0 0 12px;
-      font-size: 18px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    @media (max-width: 720px) {
-      .grid, .grid-3 { grid-template-columns: 1fr; }
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #344054;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1px solid #cfd8e3;
-      border-radius: 12px;
-      background: white;
-      font: inherit;
-      color: inherit;
-    }
-
-    textarea {
-      min-height: 96px;
-      resize: vertical;
-    }
-
-    .small-textarea { min-height: 70px; }
-
-    .btn {
-      appearance: none;
-      border: none;
-      border-radius: 999px;
-      padding: 11px 16px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-
-    .btn-primary {
-      background: var(--brand);
-      color: white;
-    }
-
-    .btn-primary:hover { background: var(--brand-dark); }
-
-    .btn-secondary {
-      background: #e8eef8;
-      color: #12315f;
-    }
-
-    .btn-ghost {
-      background: white;
-      border: 1px solid var(--line);
-      color: var(--ink);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      background: #eef4ff;
-      color: #1d4ed8;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    @media (max-width: 920px) {
-      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    .metric {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .metric .label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .metric .value {
-      font-size: 24px;
-      font-weight: 800;
-      margin-top: 6px;
-    }
-
-    .metric .hint {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 5px;
-    }
-
-    .repeat-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .repeat-item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      background: #fcfdff;
-    }
-
-    .repeat-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      gap: 10px;
-    }
-
-    .repeat-item-header strong {
-      font-size: 14px;
-    }
-
-    .remove-btn {
-      background: #fff1f1;
-      color: var(--bad);
-      border: 1px solid #ffd0d0;
-      border-radius: 999px;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .score {
+    .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
       border-radius: 999px;
+      font-size: 12px;
       font-weight: 800;
-      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: rgba(255,255,255,.12);
+      margin-bottom: 14px;
     }
 
-    .score.good { background: #e9f7ee; color: var(--good); }
-    .score.warn { background: #fff4e5; color: var(--warn); }
-    .score.bad { background: #fff0f0; color: var(--bad); }
-
-    .report {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 20px;
-      min-height: 900px;
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.02;
     }
 
-    .report h1, .report h2, .report h3 {
-      margin-top: 0;
+    .hero p {
+      margin: 0;
+      max-width: 880px;
+      color: rgba(255,255,255,.9);
+      font-size: 17px;
+      line-height: 1.5;
     }
 
-    .report h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    .report h2 {
-      font-size: 20px;
-      margin-top: 28px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .report h3 {
-      font-size: 16px;
-      margin-top: 18px;
-      margin-bottom: 8px;
-    }
-
-    .report-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
       gap: 12px;
-      margin: 18px 0 24px;
+      margin-top: 22px;
     }
 
-    .report-meta div {
-      padding: 12px;
-      background: #f8fafc;
-      border-radius: 12px;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s ease;
+      font: inherit;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: white;
+      color: #153e75;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .stat {
+      background: var(--card);
       border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
     }
 
-    .report ul {
-      padding-left: 18px;
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 800;
     }
 
-    .report .priority-list li { margin-bottom: 8px; }
+    .stat-value {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 900;
+    }
 
-    .footer-note {
-      margin-top: 16px;
+    .stat-note {
+      margin-top: 6px;
       color: var(--muted);
       font-size: 13px;
     }
 
-    .muted { color: var(--muted); }
-
-    .inline-info {
+    .section-title {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin: 22px 0 14px;
     }
 
-    .inline-info span {
-      background: #f4f7fb;
+    .section-title h2 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
       border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .card-header {
+      padding: 22px 22px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card-header h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .card-header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tag {
+      white-space: nowrap;
       padding: 8px 10px;
       border-radius: 999px;
+      background: var(--soft);
+      color: var(--brand-2);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
+      align-self: start;
+    }
+
+    .preview {
+      padding: 0 22px 20px;
+    }
+
+    .widget {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .widget-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .widget-title strong {
+      font-size: 15px;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .good { background: #e9f7ee; color: var(--success); }
+    .warn { background: #fff4e5; color: var(--warning); }
+    .soon { background: #eef2ff; color: #4338ca; }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .mini-stat {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .mini-stat span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .mini-stat strong {
+      font-size: 20px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .list-item small {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .pill-value {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .card-footer {
+      padding: 0 22px 22px;
+      margin-top: auto;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-btn {
+      text-decoration: none;
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: white;
+    }
+
+    .link-btn.primary {
+      background: var(--brand-2);
+      border-color: var(--brand-2);
+      color: white;
     }
 
     .split {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 18px;
+      margin-top: 18px;
     }
 
-    @media (max-width: 720px) {
-      .split { grid-template-columns: 1fr; }
-      .report-meta { grid-template-columns: 1fr; }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px;
     }
 
-    .kicker {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #bfdbfe;
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .panel p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .repo-map {
+      display: grid;
+      gap: 10px;
+    }
+
+    .repo-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #fbfdff;
+    }
+
+    .repo-item code {
+      font-size: 14px;
       font-weight: 800;
-      margin-bottom: 8px;
+      color: var(--brand);
+      background: #eef4ff;
+      padding: 4px 8px;
+      border-radius: 8px;
     }
 
-    @media print {
-      body { background: white; }
-      .hero, .panel:first-of-type { display: none !important; }
-      .layout { display: block; }
-      .panel { border: none; box-shadow: none; }
-      .panel-body { padding: 0; }
-      .report { border: none; min-height: auto; padding: 0; }
+    .repo-item span {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    @media (max-width: 1080px) {
+      .stats, .grid, .split { grid-template-columns: 1fr; }
+      .mini-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 20px, 1320px); }
+      .hero { padding: 24px; }
+      .card-header { flex-direction: column; }
+      .mini-stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="shell">
     <section class="hero">
-      <div class="kicker">Chef Consultancy Audit Toolkit</div>
-      <h1>Post-Visit Report Builder</h1>
-      <p>Capture audit findings on-site, calculate headline commercial indicators, and instantly generate a professional report with detailed findings, prioritised actions, quick wins, and long-term improvement strategy.</p>
-      <div class="toolbar">
-        <button class="btn btn-primary" id="generateBtn">Generate Report</button>
-        <button class="btn btn-secondary" id="saveBtn">Save Audit JSON</button>
-        <button class="btn btn-secondary" id="loadBtn">Load Audit JSON</button>
-        <button class="btn btn-ghost" id="exportBtn">Export Report HTML</button>
-        <button class="btn btn-ghost" id="printBtn">Print / Save as PDF</button>
-        <input type="file" id="fileInput" accept="application/json" hidden />
+      <div class="eyebrow">Jason Wardill • Chef Consultant System</div>
+      <h1>Kitchen Performance Dashboard</h1>
+      <p>This is the main control centre for your consultancy toolkit. Each page in the system becomes its own focused working tool, while this dashboard gives you a clear entry point, quick summaries, and direct access to every part of the app.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="kitchen-profit-audit.html">Open Kitchen Profit Audit</a>
+        <a class="btn btn-secondary" href="menu-builder.html">Open Menu Builder</a>
       </div>
     </section>
 
-    <div class="layout">
-      <section class="panel">
-        <div class="panel-header">
-          <h2>Audit Input</h2>
-          <span class="pill">Single-file GitHub Pages ready</span>
-        </div>
-        <div class="panel-body">
-          <div class="metrics">
-            <div class="metric">
-              <div class="label">Target GP</div>
-              <div class="value" id="gpMetric">0%</div>
-              <div class="hint">Calculated from sales and food cost</div>
-            </div>
-            <div class="metric">
-              <div class="label">Waste %</div>
-              <div class="value" id="wasteMetric">0%</div>
-              <div class="hint">Waste value as % of weekly sales</div>
-            </div>
-            <div class="metric">
-              <div class="label">Portioning Risk</div>
-              <div class="value" id="portionMetric">Low</div>
-              <div class="hint">Based on recorded over-portioning issues</div>
-            </div>
-            <div class="metric">
-              <div class="label">Priority Score</div>
-              <div class="value" id="priorityMetric">0/100</div>
-              <div class="hint">Higher score means more urgent action</div>
-            </div>
-          </div>
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">Active Tools</div>
+        <div class="stat-value">2</div>
+        <div class="stat-note">Dashboard is structured to grow page by page.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Core Outcome</div>
+        <div class="stat-value">Profit</div>
+        <div class="stat-note">Every tool points back to margin, standards, and control.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Current Build</div>
+        <div class="stat-value">V1</div>
+        <div class="stat-note">Foundation structure for your GitHub app.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Next Focus</div>
+        <div class="stat-value">Menu</div>
+        <div class="stat-note">Ingredient costing, target GP, actual GP, and sales mix.</div>
+      </div>
+    </section>
 
-          <div class="section">
-            <h3>Site Details</h3>
-            <div class="grid">
-              <div>
-                <label for="businessName">Business Name</label>
-                <input id="businessName" placeholder="Example: The Crown Inn" />
-              </div>
-              <div>
-                <label for="location">Location</label>
-                <input id="location" placeholder="Example: Leeds" />
-              </div>
-              <div>
-                <label for="visitDate">Visit Date</label>
-                <input id="visitDate" type="date" />
-              </div>
-              <div>
-                <label for="consultantName">Consultant Name</label>
-                <input id="consultantName" placeholder="Your name" />
-              </div>
-              <div>
-                <label for="contactName">Site Contact</label>
-                <input id="contactName" placeholder="GM / Owner / Head Chef" />
-              </div>
-              <div>
-                <label for="auditType">Audit Type</label>
-                <select id="auditType">
-                  <option>Operational Audit</option>
-                  <option>Menu & GP Review</option>
-                  <option>Kitchen Layout Review</option>
-                  <option>New Opening Support</option>
-                  <option>Chef Mentoring Visit</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h3>Commercial Snapshot</h3>
-            <div class="grid-3">
-              <div>
-                <label for="weeklySales">Weekly Food Sales (£)</label>
-                <input id="weeklySales" type="number" min="0" step="0.01" placeholder="0.00" />
-              </div>
-              <div>
-                <label for="weeklyFoodCost">Weekly Food Cost (£)</label>
-                <input id="weeklyFoodCost" type="number" min="0" step="0.01" placeholder="0.00" />
-              </div>
-              <div>
-                <label for="targetGp">Target GP %</label>
-                <input id="targetGp" type="number" min="0" step="0.1" placeholder="70" />
-              </div>
-              <div>
-                <label for="actualWasteValue">Weekly Waste Value (£)</label>
-                <input id="actualWasteValue" type="number" min="0" step="0.01" placeholder="0.00" />
-              </div>
-              <div>
-                <label for="labourPercent">Kitchen Labour %</label>
-                <input id="labourPercent" type="number" min="0" step="0.1" placeholder="0" />
-              </div>
-              <div>
-                <label for="orderingScore">Ordering Control Score</label>
-                <select id="orderingScore">
-                  <option value="Low">Low</option>
-                  <option value="Moderate">Moderate</option>
-                  <option value="High">High</option>
-                </select>
-              </div>
-            </div>
-            <div class="inline-info">
-              <span id="gpStatus">GP status: awaiting data</span>
-              <span id="wasteStatus">Waste status: awaiting data</span>
-              <span id="labourStatus">Labour status: awaiting data</span>
-            </div>
-          </div>
-
-          <div class="section">
-            <h3>Operational Observations</h3>
-            <div class="grid">
-              <div>
-                <label for="summary">Executive Summary Notes</label>
-                <textarea id="summary" placeholder="Top-line overview of the visit, what stood out, tone of the operation, and where value can be unlocked."></textarea>
-              </div>
-              <div>
-                <label for="cultureLeadership">Leadership & Kitchen Culture</label>
-                <textarea id="cultureLeadership" placeholder="Team structure, communication, accountability, standards, training, leadership observations."></textarea>
-              </div>
-              <div>
-                <label for="foodQuality">Food Quality & Offer</label>
-                <textarea id="foodQuality" placeholder="Consistency, quality, menu fit, execution, presentation, product suitability."></textarea>
-              </div>
-              <div>
-                <label for="systems">Systems & Controls</label>
-                <textarea id="systems" placeholder="Recipe cards, ordering systems, stock controls, prep sheets, handover systems, daily checks."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h3>Waste Findings</h3>
-            <button class="btn btn-secondary" type="button" onclick="addRepeatItem('wasteList', wasteTemplate())">Add Waste Record</button>
-            <div id="wasteList" class="repeat-list"></div>
-          </div>
-
-          <div class="section">
-            <h3>Over Portioning Findings</h3>
-            <button class="btn btn-secondary" type="button" onclick="addRepeatItem('portionList', portionTemplate())">Add Portioning Record</button>
-            <div id="portionList" class="repeat-list"></div>
-          </div>
-
-          <div class="section">
-            <h3>Bad Ordering / Stock Control Findings</h3>
-            <button class="btn btn-secondary" type="button" onclick="addRepeatItem('orderingList', orderingTemplate())">Add Ordering Record</button>
-            <div id="orderingList" class="repeat-list"></div>
-          </div>
-
-          <div class="section">
-            <h3>Kitchen Layout Review</h3>
-            <div class="grid">
-              <div>
-                <label for="layoutStrengths">Layout Strengths</label>
-                <textarea id="layoutStrengths" class="small-textarea" placeholder="What currently works well in the flow and setup?"></textarea>
-              </div>
-              <div>
-                <label for="layoutIssues">Layout Issues</label>
-                <textarea id="layoutIssues" class="small-textarea" placeholder="Bottlenecks, poor flow, storage issues, pass problems, crossovers, safety concerns."></textarea>
-              </div>
-              <div>
-                <label for="equipmentNeeds">Equipment / Space Requirements</label>
-                <textarea id="equipmentNeeds" class="small-textarea" placeholder="What changes would improve output, flow, consistency, or safety?"></textarea>
-              </div>
-              <div>
-                <label for="layoutImpact">Commercial Impact of Layout</label>
-                <textarea id="layoutImpact" class="small-textarea" placeholder="How does layout affect labour, speed, waste, quality, or service? "></textarea>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h3>Action Planning Inputs</h3>
-            <div class="grid">
-              <div>
-                <label for="quickWins">Immediate Quick Wins</label>
-                <textarea id="quickWins" placeholder="Enter one action per line. Example: Introduce waste sheet. Standardise chips portion. Tighten par levels."></textarea>
-              </div>
-              <div>
-                <label for="longTermStrategy">Long-Term Improvement Strategy</label>
-                <textarea id="longTermStrategy" placeholder="Enter one action per line. Example: Re-engineer menu mix. Rewrite recipe specs. Redesign prep flow."></textarea>
-              </div>
-              <div>
-                <label for="priorityActions">Prioritised Action Plan</label>
-                <textarea id="priorityActions" placeholder="Enter one action per line in order of importance."></textarea>
-              </div>
-              <div>
-                <label for="nextVisit">Recommended Next Steps / Follow-Up</label>
-                <textarea id="nextVisit" placeholder="What support should happen next: coaching, menu redevelopment, supplier review, second audit, leadership training."></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-header">
-          <h2>Generated Report</h2>
-          <div id="overallScoreBadge" class="score warn">Awaiting data</div>
-        </div>
-        <div class="panel-body">
-          <div id="report" class="report">
-            <h1>Post-Visit Report</h1>
-            <p class="muted">Fill in the audit form and click <strong>Generate Report</strong> to produce the consultancy report.</p>
-          </div>
-        </div>
-      </section>
+    <div class="section-title">
+      <div>
+        <h2>App Pages</h2>
+        <p>Each card represents a separate GitHub page in your consultancy system.</p>
+      </div>
     </div>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h3>Kitchen Profit Audit</h3>
+            <p>Your post-visit report builder for operational audits, GP pressure points, waste findings, portioning issues, ordering control, kitchen layout, quick wins, and longer-term strategy.</p>
+          </div>
+          <div class="tag">Live page</div>
+        </div>
+        <div class="preview">
+          <div class="widget">
+            <div class="widget-title">
+              <strong>Audit Snapshot Widget</strong>
+              <span class="badge warn">Priority view</span>
+            </div>
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <span>Current GP</span>
+                <strong>68.4%</strong>
+              </div>
+              <div class="mini-stat">
+                <span>Waste</span>
+                <strong>2.7%</strong>
+              </div>
+              <div class="mini-stat">
+                <span>Status</span>
+                <strong>Action</strong>
+              </div>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div>
+                  <strong>Quick wins ready</strong>
+                  <small>Portion tools, waste sheet, par-level reset.</small>
+                </div>
+                <div class="pill-value">3 items</div>
+              </div>
+              <div class="list-item">
+                <div>
+                  <strong>Report output</strong>
+                  <small>Detailed findings, action plan, long-term strategy.</small>
+                </div>
+                <div class="pill-value">PDF ready</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a class="link-btn primary" href="kitchen-profit-audit.html">Open Page</a>
+          <a class="link-btn" href="#">Widget Settings</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h3>Menu Builder</h3>
+            <p>A dedicated costing and engineering page for dishes and menus. This will break down ingredients, unit cost, mix cost, selling price, target GP, actual GP, profit, and sales mix in a format similar to the example you shared.</p>
+          </div>
+          <div class="tag">Next build</div>
+        </div>
+        <div class="preview">
+          <div class="widget">
+            <div class="widget-title">
+              <strong>Menu Engineering Widget</strong>
+              <span class="badge good">High value</span>
+            </div>
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <span>Dishes</span>
+                <strong>15</strong>
+              </div>
+              <div class="mini-stat">
+                <span>Target GP</span>
+                <strong>65%</strong>
+              </div>
+              <div class="mini-stat">
+                <span>Theo GP</span>
+                <strong>70.8%</strong>
+              </div>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div>
+                  <strong>Ingredient costing</strong>
+                  <small>Build dishes from raw ingredient lines and pack costs.</small>
+                </div>
+                <div class="pill-value">Per dish</div>
+              </div>
+              <div class="list-item">
+                <div>
+                  <strong>Sales mix view</strong>
+                  <small>Track mix contribution and spot menu winners and drags.</small>
+                </div>
+                <div class="pill-value">Menu wide</div>
+              </div>
+              <div class="list-item">
+                <div>
+                  <strong>Profit visibility</strong>
+                  <small>Compare target GP, theoretical GP, and selling price fast.</small>
+                </div>
+                <div class="pill-value">Commercial</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a class="link-btn primary" href="menu-builder.html">Open Page</a>
+          <a class="link-btn" href="#">Build Next</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="split">
+      <div class="panel">
+        <h3>Recommended GitHub Structure</h3>
+        <p>Keep each major tool as a separate page so the app stays clean, scalable, and easier to maintain as your consultancy system grows.</p>
+        <div class="repo-map">
+          <div class="repo-item">
+            <code>index.html</code>
+            <span>Main dashboard and entry point</span>
+          </div>
+          <div class="repo-item">
+            <code>kitchen-profit-audit.html</code>
+            <span>Post-visit report builder already created</span>
+          </div>
+          <div class="repo-item">
+            <code>menu-builder.html</code>
+            <span>Dish costing and menu engineering page we build next</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Build Roadmap</h3>
+        <p>We can now add each page one at a time and make the dashboard feel like a proper hospitality consultancy platform.</p>
+        <div class="list">
+          <div class="list-item">
+            <div>
+              <strong>Step 1</strong>
+              <small>Dashboard created as your GitHub index page.</small>
+            </div>
+            <span class="badge good">Done</span>
+          </div>
+          <div class="list-item">
+            <div>
+              <strong>Step 2</strong>
+              <small>Build menu builder from your screenshot structure.</small>
+            </div>
+            <span class="badge soon">Next</span>
+          </div>
+          <div class="list-item">
+            <div>
+              <strong>Step 3</strong>
+              <small>Add more tools and live widgets to the dashboard.</small>
+            </div>
+            <span class="badge soon">Queued</span>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-
-  <script>
-    let counters = { waste: 0, portion: 0, ordering: 0 };
-
-    function fmtCurrency(value) {
-      const num = Number(value || 0);
-      return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(num);
-    }
-
-    function fmtPercent(value) {
-      if (!isFinite(value)) return '0%';
-      return `${Number(value).toFixed(1)}%`;
-    }
-
-    function safe(text) {
-      return String(text || '').trim();
-    }
-
-    function lines(text) {
-      return safe(text).split('\n').map(v => v.trim()).filter(Boolean);
-    }
-
-    function scoreClass(score) {
-      if (score >= 75) return 'bad';
-      if (score >= 40) return 'warn';
-      return 'good';
-    }
-
-    function labelScore(score) {
-      if (score >= 75) return 'High Priority';
-      if (score >= 40) return 'Medium Priority';
-      return 'Stable / Lower Priority';
-    }
-
-    function wasteTemplate() {
-      counters.waste += 1;
-      return `
-        <div class="repeat-item" data-type="waste">
-          <div class="repeat-item-header">
-            <strong>Waste Record ${counters.waste}</strong>
-            <button type="button" class="remove-btn" onclick="this.closest('.repeat-item').remove(); updateMetrics();">Remove</button>
-          </div>
-          <div class="grid">
-            <div>
-              <label>Item / Area</label>
-              <input data-field="item" placeholder="Example: Prep vegetables / protein trim / desserts" />
-            </div>
-            <div>
-              <label>Estimated Cost Impact (£)</label>
-              <input data-field="cost" type="number" min="0" step="0.01" placeholder="0.00" />
-            </div>
-            <div>
-              <label>Cause</label>
-              <input data-field="cause" placeholder="Example: poor prep planning, overproduction, short shelf life" />
-            </div>
-            <div>
-              <label>Recommended Fix</label>
-              <input data-field="fix" placeholder="Example: tighter prep sheet, reuse trim, smaller batch prep" />
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function portionTemplate() {
-      counters.portion += 1;
-      return `
-        <div class="repeat-item" data-type="portion">
-          <div class="repeat-item-header">
-            <strong>Portioning Record ${counters.portion}</strong>
-            <button type="button" class="remove-btn" onclick="this.closest('.repeat-item').remove(); updateMetrics();">Remove</button>
-          </div>
-          <div class="grid">
-            <div>
-              <label>Dish / Product</label>
-              <input data-field="dish" placeholder="Example: chips, steak garnish, sauce, protein" />
-            </div>
-            <div>
-              <label>Estimated Weekly Loss (£)</label>
-              <input data-field="loss" type="number" min="0" step="0.01" placeholder="0.00" />
-            </div>
-            <div>
-              <label>Issue</label>
-              <input data-field="issue" placeholder="Example: inconsistent scoop size, no scales, chef discretion" />
-            </div>
-            <div>
-              <label>Recommended Fix</label>
-              <input data-field="fix" placeholder="Example: recipe cards, portion tools, line training" />
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function orderingTemplate() {
-      counters.ordering += 1;
-      return `
-        <div class="repeat-item" data-type="ordering">
-          <div class="repeat-item-header">
-            <strong>Ordering Record ${counters.ordering}</strong>
-            <button type="button" class="remove-btn" onclick="this.closest('.repeat-item').remove(); updateMetrics();">Remove</button>
-          </div>
-          <div class="grid">
-            <div>
-              <label>Category / Supplier / Item</label>
-              <input data-field="category" placeholder="Example: dairy, fresh produce, meat supplier" />
-            </div>
-            <div>
-              <label>Problem</label>
-              <input data-field="problem" placeholder="Example: over-ordering, duplicates, poor par levels, panic buying" />
-            </div>
-            <div>
-              <label>Commercial Impact</label>
-              <input data-field="impact" placeholder="Example: spoilage, cash tied up, stock-outs, menu inconsistency" />
-            </div>
-            <div>
-              <label>Recommended Fix</label>
-              <input data-field="fix" placeholder="Example: par sheet, supplier days, ordering approval, tighter stock count" />
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function addRepeatItem(listId, html) {
-      const list = document.getElementById(listId);
-      list.insertAdjacentHTML('beforeend', html);
-      list.querySelectorAll('input').forEach(input => input.addEventListener('input', updateMetrics));
-      updateMetrics();
-    }
-
-    function extractRepeatData(listId) {
-      return [...document.querySelectorAll(`#${listId} .repeat-item`)].map(item => {
-        const fields = {};
-        item.querySelectorAll('[data-field]').forEach(el => {
-          fields[el.dataset.field] = el.value;
-        });
-        return fields;
-      });
-    }
-
-    function calculateData() {
-      const weeklySales = Number(document.getElementById('weeklySales').value || 0);
-      const weeklyFoodCost = Number(document.getElementById('weeklyFoodCost').value || 0);
-      const targetGp = Number(document.getElementById('targetGp').value || 0);
-      const actualWasteValue = Number(document.getElementById('actualWasteValue').value || 0);
-      const labourPercent = Number(document.getElementById('labourPercent').value || 0);
-
-      const wasteItems = extractRepeatData('wasteList');
-      const portionItems = extractRepeatData('portionList');
-      const orderingItems = extractRepeatData('orderingList');
-
-      const actualGp = weeklySales > 0 ? ((weeklySales - weeklyFoodCost) / weeklySales) * 100 : 0;
-      const wastePercent = weeklySales > 0 ? (actualWasteValue / weeklySales) * 100 : 0;
-      const totalPortionLoss = portionItems.reduce((sum, item) => sum + Number(item.loss || 0), 0);
-      const wasteRecordsCost = wasteItems.reduce((sum, item) => sum + Number(item.cost || 0), 0);
-      const portionRisk = portionItems.length >= 4 || totalPortionLoss >= 250 ? 'High' : portionItems.length >= 2 || totalPortionLoss >= 100 ? 'Moderate' : 'Low';
-
-      let score = 0;
-      score += Math.max(0, Math.min(30, (targetGp - actualGp) * 2));
-      score += Math.max(0, Math.min(20, wastePercent * 4));
-      score += Math.max(0, Math.min(15, labourPercent > 0 ? labourPercent - 20 : 0));
-      score += Math.min(15, portionItems.length * 4);
-      score += Math.min(10, orderingItems.length * 2.5);
-      score += Math.min(10, wasteItems.length * 2.5);
-      score = Math.round(score);
-
-      return {
-        weeklySales, weeklyFoodCost, targetGp, actualWasteValue, labourPercent,
-        wasteItems, portionItems, orderingItems,
-        actualGp, wastePercent, totalPortionLoss, wasteRecordsCost, portionRisk, score
-      };
-    }
-
-    function updateMetrics() {
-      const data = calculateData();
-
-      document.getElementById('gpMetric').textContent = fmtPercent(data.actualGp);
-      document.getElementById('wasteMetric').textContent = fmtPercent(data.wastePercent);
-      document.getElementById('portionMetric').textContent = data.portionRisk;
-      document.getElementById('priorityMetric').textContent = `${data.score}/100`;
-
-      const gpDelta = data.targetGp ? data.targetGp - data.actualGp : 0;
-      document.getElementById('gpStatus').textContent = data.weeklySales > 0
-        ? `GP status: ${gpDelta > 0 ? `${gpDelta.toFixed(1)} points below target` : `on or above target by ${Math.abs(gpDelta).toFixed(1)} points`}`
-        : 'GP status: awaiting data';
-
-      document.getElementById('wasteStatus').textContent = data.weeklySales > 0
-        ? `Waste status: ${fmtCurrency(data.actualWasteValue)} / week (${fmtPercent(data.wastePercent)})`
-        : 'Waste status: awaiting data';
-
-      document.getElementById('labourStatus').textContent = data.labourPercent > 0
-        ? `Labour status: kitchen labour at ${fmtPercent(data.labourPercent)}`
-        : 'Labour status: awaiting data';
-
-      const badge = document.getElementById('overallScoreBadge');
-      badge.className = `score ${scoreClass(data.score)}`;
-      badge.textContent = `${labelScore(data.score)} • ${data.score}/100`;
-    }
-
-    function getFormData() {
-      return {
-        businessName: document.getElementById('businessName').value,
-        location: document.getElementById('location').value,
-        visitDate: document.getElementById('visitDate').value,
-        consultantName: document.getElementById('consultantName').value,
-        contactName: document.getElementById('contactName').value,
-        auditType: document.getElementById('auditType').value,
-        weeklySales: document.getElementById('weeklySales').value,
-        weeklyFoodCost: document.getElementById('weeklyFoodCost').value,
-        targetGp: document.getElementById('targetGp').value,
-        actualWasteValue: document.getElementById('actualWasteValue').value,
-        labourPercent: document.getElementById('labourPercent').value,
-        orderingScore: document.getElementById('orderingScore').value,
-        summary: document.getElementById('summary').value,
-        cultureLeadership: document.getElementById('cultureLeadership').value,
-        foodQuality: document.getElementById('foodQuality').value,
-        systems: document.getElementById('systems').value,
-        layoutStrengths: document.getElementById('layoutStrengths').value,
-        layoutIssues: document.getElementById('layoutIssues').value,
-        equipmentNeeds: document.getElementById('equipmentNeeds').value,
-        layoutImpact: document.getElementById('layoutImpact').value,
-        quickWins: document.getElementById('quickWins').value,
-        longTermStrategy: document.getElementById('longTermStrategy').value,
-        priorityActions: document.getElementById('priorityActions').value,
-        nextVisit: document.getElementById('nextVisit').value,
-        wasteItems: extractRepeatData('wasteList'),
-        portionItems: extractRepeatData('portionList'),
-        orderingItems: extractRepeatData('orderingList')
-      };
-    }
-
-    function setFormData(data) {
-      const fields = [
-        'businessName','location','visitDate','consultantName','contactName','auditType','weeklySales','weeklyFoodCost',
-        'targetGp','actualWasteValue','labourPercent','orderingScore','summary','cultureLeadership','foodQuality','systems',
-        'layoutStrengths','layoutIssues','equipmentNeeds','layoutImpact','quickWins','longTermStrategy','priorityActions','nextVisit'
-      ];
-
-      fields.forEach(id => {
-        if (document.getElementById(id) && data[id] !== undefined) {
-          document.getElementById(id).value = data[id];
-        }
-      });
-
-      document.getElementById('wasteList').innerHTML = '';
-      document.getElementById('portionList').innerHTML = '';
-      document.getElementById('orderingList').innerHTML = '';
-
-      counters = { waste: 0, portion: 0, ordering: 0 };
-
-      (data.wasteItems || []).forEach(item => {
-        addRepeatItem('wasteList', wasteTemplate());
-        const row = document.querySelector('#wasteList .repeat-item:last-child');
-        row.querySelector('[data-field="item"]').value = item.item || '';
-        row.querySelector('[data-field="cost"]').value = item.cost || '';
-        row.querySelector('[data-field="cause"]').value = item.cause || '';
-        row.querySelector('[data-field="fix"]').value = item.fix || '';
-      });
-
-      (data.portionItems || []).forEach(item => {
-        addRepeatItem('portionList', portionTemplate());
-        const row = document.querySelector('#portionList .repeat-item:last-child');
-        row.querySelector('[data-field="dish"]').value = item.dish || '';
-        row.querySelector('[data-field="loss"]').value = item.loss || '';
-        row.querySelector('[data-field="issue"]').value = item.issue || '';
-        row.querySelector('[data-field="fix"]').value = item.fix || '';
-      });
-
-      (data.orderingItems || []).forEach(item => {
-        addRepeatItem('orderingList', orderingTemplate());
-        const row = document.querySelector('#orderingList .repeat-item:last-child');
-        row.querySelector('[data-field="category"]').value = item.category || '';
-        row.querySelector('[data-field="problem"]').value = item.problem || '';
-        row.querySelector('[data-field="impact"]').value = item.impact || '';
-        row.querySelector('[data-field="fix"]').value = item.fix || '';
-      });
-
-      updateMetrics();
-    }
-
-    function toList(items, emptyText = 'No items recorded.') {
-      if (!items.length) return `<p class="muted">${emptyText}</p>`;
-      return `<ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
-    }
-
-    function makeDetailedFindings(data, calc) {
-      const findings = [];
-
-      if (calc.weeklySales > 0) {
-        findings.push(`Current food GP is <strong>${fmtPercent(calc.actualGp)}</strong> against a target of <strong>${fmtPercent(calc.targetGp)}</strong>. ${calc.targetGp > calc.actualGp ? `This leaves a gap of <strong>${(calc.targetGp - calc.actualGp).toFixed(1)} GP points</strong>.` : 'The site is meeting or exceeding the stated GP target.'}`);
-      }
-
-      if (calc.actualWasteValue > 0) {
-        findings.push(`Recorded waste sits at <strong>${fmtCurrency(calc.actualWasteValue)}</strong> per week, equivalent to <strong>${fmtPercent(calc.wastePercent)}</strong> of weekly food sales.`);
-      }
-
-      if (calc.totalPortionLoss > 0) {
-        findings.push(`Observed over-portioning creates an estimated weekly loss of <strong>${fmtCurrency(calc.totalPortionLoss)}</strong>.`);
-      }
-
-      if (safe(data.summary)) findings.push(safe(data.summary));
-      if (safe(data.foodQuality)) findings.push(`<strong>Food quality and offer:</strong> ${safe(data.foodQuality)}`);
-      if (safe(data.cultureLeadership)) findings.push(`<strong>Leadership and team culture:</strong> ${safe(data.cultureLeadership)}`);
-      if (safe(data.systems)) findings.push(`<strong>Systems and controls:</strong> ${safe(data.systems)}`);
-      if (safe(data.layoutIssues) || safe(data.layoutImpact)) {
-        findings.push(`<strong>Kitchen layout:</strong> ${safe(data.layoutIssues) || 'No layout issues recorded.'} ${safe(data.layoutImpact) ? `Commercial impact noted: ${safe(data.layoutImpact)}` : ''}`.trim());
-      }
-
-      return findings;
-    }
-
-    function prioritisedActions(data, calc) {
-      const manual = lines(data.priorityActions);
-      if (manual.length) return manual;
-
-      const generated = [];
-      if (calc.targetGp > calc.actualGp) generated.push(`Close the GP gap by standardising recipe specs, reviewing menu pricing, and tightening portion control across key dishes.`);
-      if (calc.actualWasteValue > 0) generated.push(`Implement a daily waste recording system and assign accountability for reviewing top waste categories each week.`);
-      if (calc.portionItems.length) generated.push(`Introduce measured portion tools, line training, and recipe cards for all dishes where over-portioning was observed.`);
-      if (calc.orderingItems.length) generated.push(`Reset ordering controls using par levels, delivery-day planning, and clearer ownership of purchasing decisions.`);
-      if (safe(data.layoutIssues)) generated.push(`Address workflow bottlenecks in the kitchen layout to improve speed of service, reduce excess movement, and support better prep discipline.`);
-      if (safe(data.cultureLeadership)) generated.push(`Strengthen kitchen leadership routines including shift briefings, checks, handovers, and standards accountability.`);
-      if (!generated.length) generated.push('Build a 30-day action plan with one owner per task and weekly review points.');
-      return generated;
-    }
-
-    function quickWinsList(data, calc) {
-      const manual = lines(data.quickWins);
-      if (manual.length) return manual;
-
-      const generated = [];
-      if (calc.actualWasteValue > 0) generated.push('Start a simple daily waste sheet immediately and review it at the end of each shift.');
-      if (calc.portionItems.length) generated.push('Add scales, scoops, or ladles to any station with inconsistent portions.');
-      if (calc.orderingItems.length) generated.push('Reduce order quantities to realistic par levels for the next delivery cycle.');
-      generated.push('Brief the kitchen team on the top three profit leaks found during the visit.');
-      return generated;
-    }
-
-    function longTermList(data, calc) {
-      const manual = lines(data.longTermStrategy);
-      if (manual.length) return manual;
-
-      const generated = [
-        'Complete a full menu engineering review to align offer, pricing, and margin performance.',
-        'Develop recipe specification packs and costed build sheets for the full menu.',
-        'Create a structured chef development plan focused on leadership, control, and consistency.'
-      ];
-      if (safe(data.layoutIssues)) generated.push('Plan a phased kitchen layout improvement project to improve flow, storage, and service efficiency.');
-      return generated;
-    }
-
-    function renderRepeatSection(title, items, formatter, emptyText) {
-      return `
-        <h3>${title}</h3>
-        ${items.length ? `<ul>${items.map(formatter).join('')}</ul>` : `<p class="muted">${emptyText}</p>`}
-      `;
-    }
-
-    function generateReport() {
-      const data = getFormData();
-      const calc = calculateData();
-
-      const detailedFindings = makeDetailedFindings(data, calc);
-      const actions = prioritisedActions(data, calc);
-      const quickWins = quickWinsList(data, calc);
-      const longTerm = longTermList(data, calc);
-
-      const reportHtml = `
-        <h1>Post-Visit Report</h1>
-        <p><strong>${safe(data.businessName) || 'Unnamed Site'}</strong>${safe(data.location) ? ` • ${safe(data.location)}` : ''}</p>
-
-        <div class="report-meta">
-          <div><strong>Visit Date</strong><br>${safe(data.visitDate) || 'Not recorded'}</div>
-          <div><strong>Consultant</strong><br>${safe(data.consultantName) || 'Not recorded'}</div>
-          <div><strong>Site Contact</strong><br>${safe(data.contactName) || 'Not recorded'}</div>
-          <div><strong>Audit Type</strong><br>${safe(data.auditType) || 'Not recorded'}</div>
-        </div>
-
-        <h2>Commercial Snapshot</h2>
-        <div class="report-meta">
-          <div><strong>Weekly Food Sales</strong><br>${fmtCurrency(calc.weeklySales)}</div>
-          <div><strong>Weekly Food Cost</strong><br>${fmtCurrency(calc.weeklyFoodCost)}</div>
-          <div><strong>Actual GP</strong><br>${fmtPercent(calc.actualGp)}</div>
-          <div><strong>Target GP</strong><br>${fmtPercent(calc.targetGp)}</div>
-          <div><strong>Waste Value</strong><br>${fmtCurrency(calc.actualWasteValue)}</div>
-          <div><strong>Waste % of Sales</strong><br>${fmtPercent(calc.wastePercent)}</div>
-          <div><strong>Kitchen Labour %</strong><br>${fmtPercent(calc.labourPercent)}</div>
-          <div><strong>Overall Priority</strong><br>${labelScore(calc.score)} (${calc.score}/100)</div>
-        </div>
-
-        <h2>Detailed Findings</h2>
-        ${toList(detailedFindings, 'No detailed findings recorded.')}
-
-        ${renderRepeatSection('Waste Findings', data.wasteItems, item => `<li><strong>${safe(item.item) || 'Unspecified item'}</strong>${item.cost ? ` • Estimated impact: ${fmtCurrency(item.cost)}` : ''}<br>Cause: ${safe(item.cause) || 'Not recorded'}<br>Recommended fix: ${safe(item.fix) || 'Not recorded'}</li>`, 'No waste findings recorded.')}
-
-        ${renderRepeatSection('Over Portioning Findings', data.portionItems, item => `<li><strong>${safe(item.dish) || 'Unspecified dish'}</strong>${item.loss ? ` • Estimated weekly loss: ${fmtCurrency(item.loss)}` : ''}<br>Issue: ${safe(item.issue) || 'Not recorded'}<br>Recommended fix: ${safe(item.fix) || 'Not recorded'}</li>`, 'No over-portioning findings recorded.')}
-
-        ${renderRepeatSection('Bad Ordering / Stock Control Findings', data.orderingItems, item => `<li><strong>${safe(item.category) || 'Unspecified category'}</strong><br>Problem: ${safe(item.problem) || 'Not recorded'}<br>Commercial impact: ${safe(item.impact) || 'Not recorded'}<br>Recommended fix: ${safe(item.fix) || 'Not recorded'}</li>`, 'No ordering issues recorded.')}
-
-        <h2>Kitchen Layout Review</h2>
-        <div class="split">
-          <div>
-            <h3>Strengths</h3>
-            <p>${safe(data.layoutStrengths) || '<span class="muted">No strengths recorded.</span>'}</p>
-          </div>
-          <div>
-            <h3>Issues</h3>
-            <p>${safe(data.layoutIssues) || '<span class="muted">No issues recorded.</span>'}</p>
-          </div>
-        </div>
-        <div class="split">
-          <div>
-            <h3>Equipment / Space Requirements</h3>
-            <p>${safe(data.equipmentNeeds) || '<span class="muted">No equipment recommendations recorded.</span>'}</p>
-          </div>
-          <div>
-            <h3>Commercial Impact</h3>
-            <p>${safe(data.layoutImpact) || '<span class="muted">No commercial impact recorded.</span>'}</p>
-          </div>
-        </div>
-
-        <h2>Clear, Prioritised Action Plan</h2>
-        ${toList(actions, 'No action plan recorded.')}
-
-        <h2>Immediate Quick Wins</h2>
-        ${toList(quickWins, 'No quick wins recorded.')}
-
-        <h2>Long-Term Improvement Strategy</h2>
-        ${toList(longTerm, 'No long-term strategy recorded.')}
-
-        <h2>Recommended Follow-Up</h2>
-        <p>${safe(data.nextVisit) || 'Suggested next step: schedule a follow-up visit within 2 to 4 weeks to review progress against the action plan and reset priorities.'}</p>
-
-        <p class="footer-note">Generated using the Chef Consultancy Audit Report Builder. This report is designed to support operational improvement, stronger commercial control, and clearer accountability after each site visit.</p>
-      `;
-
-      document.getElementById('report').innerHTML = reportHtml;
-      updateMetrics();
-    }
-
-    function saveJson() {
-      const data = getFormData();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `${safe(data.businessName || 'audit').replace(/\s+/g, '-').toLowerCase()}-audit.json`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    function exportHtml() {
-      generateReport();
-      const reportMarkup = document.getElementById('report').innerHTML;
-      const site = safe(document.getElementById('businessName').value || 'audit-report').replace(/\s+/g, '-').toLowerCase();
-      const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Post-Visit Report</title>
-<style>
-body { font-family: Inter, Arial, sans-serif; color: #17202a; margin: 40px auto; width: min(920px, calc(100% - 40px)); line-height: 1.5; }
-h1 { font-size: 32px; margin-bottom: 10px; }
-h2 { margin-top: 28px; border-bottom: 1px solid #dbe2ea; padding-bottom: 8px; }
-h3 { margin-top: 18px; }
-.report-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 18px 0 24px; }
-.report-meta div { padding: 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #dbe2ea; }
-.split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-ul { padding-left: 18px; }
-.muted { color: #667085; }
-.footer-note { margin-top: 16px; color: #667085; font-size: 13px; }
-@media print { body { margin: 20px auto; } }
-</style>
-</head>
-<body>
-${reportMarkup}
-</body>
-</html>`;
-      const blob = new Blob([html], { type: 'text/html' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `${site}-post-visit-report.html`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    document.getElementById('generateBtn').addEventListener('click', generateReport);
-    document.getElementById('saveBtn').addEventListener('click', saveJson);
-    document.getElementById('loadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
-    document.getElementById('exportBtn').addEventListener('click', exportHtml);
-    document.getElementById('printBtn').addEventListener('click', () => { generateReport(); window.print(); });
-
-    document.getElementById('fileInput').addEventListener('change', async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        setFormData(data);
-        generateReport();
-      } catch (error) {
-        alert('Could not load file. Please use a valid audit JSON export from this app.');
-      }
-      event.target.value = '';
-    });
-
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-      el.addEventListener('input', updateMetrics);
-      el.addEventListener('change', updateMetrics);
-    });
-
-    addRepeatItem('wasteList', wasteTemplate());
-    addRepeatItem('portionList', portionTemplate());
-    addRepeatItem('orderingList', orderingTemplate());
-    updateMetrics();
-  </script>
 </body>
 </html>
